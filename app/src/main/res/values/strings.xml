@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name" translatable="false">Fragments2</string>
+    <string name="addUserString" translatable="false">Добавить пользователя</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="name" translatable="false">Name</string>
+    <string name="last_name" translatable="false">last name</string>
+    <string name="_01_01_0001" translatable="false">01.01.0001</string>
+    <string name="country" translatable="false">country</string>
+    <string name="city" translatable="false">city</string>
+    <string name="himself_information" translatable="false">himself information</string>
+    <string name="todo" translatable="false">TODO</string>
+    <string name="delete" translatable="false">Удалить</string>
+    <string name="editUser">Редактировать</string>
+    <string name="name_domain_com">name@domain.com</string>
+    <string name="_7_000_000_00_00">+7(000) 000 - 00 - 00</string>
+    <string name="save">Сохранить</string>
+    <string name="add_user">Добавить пользователя</string>
+    <string name="nameA">Name</string>
+    <string name="edittext_empty_error">Поле не может быть пустым</string>
+    <string name="confirm_delete">Подтвердите удаление</string>
+    <string name="confirm_back_unsaved_changes">Подтвердите возврат без сохранения изменений</string>
+    <string name="reset">Сбросить</string>
+    <string name="clear">Очистить</string>
+</resources>

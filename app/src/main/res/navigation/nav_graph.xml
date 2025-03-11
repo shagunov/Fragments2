@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/userListFragment">
+
+    <fragment
+        android:id="@+id/userEditFragment"
+        android:name="com.example.fragments2.presentation.UserEditFragment"
+        android:label="Редактирование пользователя"
+        tools:layout="@layout/fragment_user_edit" >
+
+        <argument
+            app:argType="integer"
+            android:name="UserID"
+            android:defaultValue="0"
+            app:nullable="false"/>
+    </fragment>
+    <fragment
+        android:id="@+id/userDetailsFragment"
+        android:name="com.example.fragments2.presentation.UserDetailsFragment"
+        android:label="Подробная информация"
+        tools:layout="@layout/fragment_user_details" >
+
+        <argument
+            app:argType="integer"
+            android:name="UserID"
+            android:defaultValue="0"
+            app:nullable="false"/>
+    </fragment>
+    <fragment
+        android:id="@+id/userListFragment"
+        android:name="com.example.fragments2.presentation.UserListFragment"
+        android:label="Список пользователей"
+        tools:layout="@layout/fragment_user_list" >
+        <action
+            android:id="@+id/action_userListFragment_to_UserDetailsFragment"
+            app:destination="@id/userDetailsFragment" >
+            <argument
+                app:argType="integer"
+                android:name="UserID"
+                android:defaultValue="0"
+                app:nullable="false"/>
+        </action>
+        <action
+            android:id="@+id/action_userListFragment_to_userEditFragment"
+            app:destination="@id/userEditFragment" >
+            <argument
+                app:argType="integer"
+                android:name="UserID"
+                android:defaultValue="0"
+                app:nullable="false"/>
+        </action>
+    </fragment>
+</navigation>
