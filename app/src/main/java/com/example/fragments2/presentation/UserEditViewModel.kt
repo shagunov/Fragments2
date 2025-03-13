@@ -16,6 +16,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.reflect.KProperty
 
+sealed class TextValidationErrorType: TextValidationStatus.Invalid(){
+    data object InvalidNameFormat: TextValidationErrorType()
+    data object InvalidEmailFormat: TextValidationErrorType()
+    data object PhoneNumberFormat: TextValidationErrorType()
+    // data object InvalidCountry: TextValidationErrorType()
+    // data object InvalidCity: TextValidationErrorType()
+}
+
 class UserFormState(
     var name: String,
     var lastName: String,
@@ -39,7 +47,7 @@ class UserFormValidationStatus(
 sealed class TextValidationStatus {
     data object Empty: TextValidationStatus()
     data object Valid: TextValidationStatus()
-    data class Invalid(val description: String): TextValidationStatus()
+    open class Invalid: TextValidationStatus()
 }
 
 @HiltViewModel
@@ -190,17 +198,54 @@ class UserEditViewModel @Inject constructor(
         validateForm()
     }
 
-    private fun validateForm(){
+    private fun validateForm() {
+
+        val nameRegexp = Regex(pattern = """^[A-Z][a-z]*$|^[А-Я][а-я]*$""")
+        val emailRegexp = Regex("""^([A-Z]|[a-z]|[0-9])+\.?([A-Z]|[a-z]|[0-9])*@[a-z]+\.[a-z]+""")
+        val phoneNumberRegexp = Regex("""\+[0-9]+\([0-9]{3}\)[0-9]{3} [0-9]{2}-[0-9]{2}""")
+
+        val nameValidationStatus: TextValidationStatus = when{
+            userFormState.value.name.isEmpty() -> TextValidationStatus.Empty
+            !userFormState.value.name.matches(nameRegexp) -> TextValidationErrorType.InvalidNameFormat
+            else -> TextValidationStatus.Valid
+        }
+        val lastNameValidationStatus: TextValidationStatus = when{
+            userFormState.value.lastName.isEmpty() -> TextValidationStatus.Empty
+            !userFormState.value.lastName.matches(nameRegexp) -> TextValidationErrorType.InvalidNameFormat
+            else -> TextValidationStatus.Valid
+        }
+        val cityValidationStatus: TextValidationStatus = when{
+            userFormState.value.city.isEmpty() -> TextValidationStatus.Empty
+            !userFormState.value.city.matches(nameRegexp) -> TextValidationErrorType.InvalidNameFormat
+            else -> TextValidationStatus.Valid
+        }
+        val countryValidationStatus: TextValidationStatus = when{
+            userFormState.value.country.isEmpty() -> TextValidationStatus.Empty
+            !userFormState.value.country.matches(nameRegexp) -> TextValidationErrorType.InvalidNameFormat
+            else -> TextValidationStatus.Valid
+        }
+        val emailValidationStatus: TextValidationStatus = when{
+            userFormState.value.email.isEmpty() -> TextValidationStatus.Empty
+            !userFormState.value.email.matches(emailRegexp) -> TextValidationErrorType.InvalidEmailFormat
+            else -> TextValidationStatus.Valid
+        }
+        val phoneNumberValidationStatus: TextValidationStatus = when{
+            userFormState.value.phoneNumber.isEmpty() -> TextValidationStatus.Empty
+            !userFormState.value.phoneNumber.matches(phoneNumberRegexp) -> TextValidationErrorType.PhoneNumberFormat
+            else -> TextValidationStatus.Valid
+        }
+
+
         val form = userFormState.value
         _validationStatus.update {
             UserFormValidationStatus(
-                name = if(form.name.isEmpty()) TextValidationStatus.Empty else TextValidationStatus.Valid,
-                lastName = if(form.lastName.isEmpty()) TextValidationStatus.Empty else TextValidationStatus.Valid,
-                phoneNumber = if(form.phoneNumber.isEmpty()) TextValidationStatus.Empty else TextValidationStatus.Valid,
-                email = if(form.email.isEmpty()) TextValidationStatus.Empty else TextValidationStatus.Valid,
-                country = if(form.country.isEmpty()) TextValidationStatus.Empty else TextValidationStatus.Valid,
-                city = if(form.city.isEmpty()) TextValidationStatus.Empty else TextValidationStatus.Valid,
-                himself = if(form.himself.isEmpty()) TextValidationStatus.Empty else TextValidationStatus.Valid
+                name = nameValidationStatus,
+                lastName = lastNameValidationStatus,
+                phoneNumber = phoneNumberValidationStatus,
+                email = emailValidationStatus,
+                country = countryValidationStatus,
+                city = cityValidationStatus,
+                himself = if (form.himself.isEmpty()) TextValidationStatus.Empty else TextValidationStatus.Valid
             )
         }
     }

@@ -5,23 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.fragments2.R
 import com.example.fragments2.databinding.FragmentUserEditBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 @AndroidEntryPoint
 class UserEditFragment : Fragment() {
@@ -81,22 +72,25 @@ class UserEditFragment : Fragment() {
             // validation
             lifecycleScope.launch {
                 viewModel.validationStatus.collect { value -> value.apply {
-                    nameEditText.error = (name as? TextValidationStatus.Invalid)?.description
-                    lastNameEditText.error = (name as? TextValidationStatus.Invalid)?.description
-                    phoneNumberEditText.error = (phoneNumber as? TextValidationStatus.Invalid)?.description
-                    emailEditText.error = (email as? TextValidationStatus.Invalid)?.description
-                    countryEditText.error = (country as? TextValidationStatus.Invalid)?.description
-                    cityEditText.error = (city as? TextValidationStatus.Invalid)?.description
-                    aboutHimselfEditText.error = (himself as? TextValidationStatus.Invalid)?.description
 
-                    // name couldn't be empty
-                    nameEditText.error = if (name is TextValidationStatus.Empty) getText(R.string.edittext_empty_error) else null
-                    lastNameEditText.error = if (lastName is TextValidationStatus.Empty) getText(R.string.edittext_empty_error) else null
-                    phoneNumberEditText.error = if (phoneNumber is TextValidationStatus.Empty) getText(R.string.edittext_empty_error) else null
-                    emailEditText.error = if (email is TextValidationStatus.Empty) getText(R.string.edittext_empty_error) else null
-                    countryEditText.error = if (country is TextValidationStatus.Empty) getText(R.string.edittext_empty_error) else null
-                    cityEditText.error = if (city is TextValidationStatus.Empty) getText(R.string.edittext_empty_error) else null
-                    aboutHimselfEditText.error = if (himself is TextValidationStatus.Empty) getText(R.string.edittext_empty_error) else null
+                    fun displayValidationStatus(status: TextValidationStatus): CharSequence?{
+                        return when (status){
+                            is TextValidationStatus.Valid -> null
+                            is TextValidationStatus.Empty -> getText(R.string.edittext_empty_error)
+                            is TextValidationErrorType.InvalidNameFormat -> getText(R.string.name_validation_error)
+                            is TextValidationErrorType.PhoneNumberFormat -> getText(R.string.phone_number_validation_error)
+                            is TextValidationErrorType.InvalidEmailFormat -> getText(R.string.email_validation_error)
+                            else -> null
+                        }
+                    }
+
+                    nameEditText.error = displayValidationStatus(name)
+                    lastNameEditText.error = displayValidationStatus(lastName)
+                    phoneNumberEditText.error = displayValidationStatus(phoneNumber)
+                    emailEditText.error = displayValidationStatus(email)
+                    countryEditText.error = displayValidationStatus(country)
+                    cityEditText.error = displayValidationStatus(city)
+                    aboutHimselfEditText.error = displayValidationStatus(himself)
 
                     // if all fields are valid, submit button is enabled
                     submitButton.isEnabled = name is TextValidationStatus.Valid &&

@@ -22,4 +22,7 @@
     <string name="confirm_back_unsaved_changes">Подтвердите возврат без сохранения изменений</string>
     <string name="reset">Сбросить</string>
     <string name="clear">Очистить</string>
+    <string name="name_validation_error">Неверно введено название или имя</string>
+    <string name="email_validation_error">Неверный email</string>
+    <string name="phone_number_validation_error">Неверный формат номера телефона</string>
 </resources>
